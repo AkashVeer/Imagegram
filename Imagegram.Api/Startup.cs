@@ -1,3 +1,4 @@
+using Imagegram.Api.Middlewares;
 using Imagegram.Application.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +29,8 @@ namespace Imagegram.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDatabase(Configuration);
+            services.AddRepository();
+            services.AddServices();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -50,7 +53,7 @@ namespace Imagegram.Api
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

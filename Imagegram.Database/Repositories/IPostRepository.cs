@@ -13,5 +13,6 @@ namespace Imagegram.Database.Repositories
         Task<List<Post>> GetPostsByAccount(Guid AccountId);
         Task<List<Post>> GetAllPosts();
         Task<Post> AddPost(Post post);
+        Task DeletePost(Post post);
     }
 }

@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Imagegram.Domain
+namespace Imagegram.Model.Dtos.Comments
 {
-    public class Comment
+    public class CommentCreateDomainModel
     {
-        public Guid Id { get; set; }
         public string Content { get; set; }
         public Guid Creator { get; set; }
-        public Guid PostId { get; set; }
         public DateTime CreatedAt { get; set; }
-        [ForeignKey("Creator")]
-        public Account Account { get; set; }
+        public Guid PostId { get; set; }
     }
 }

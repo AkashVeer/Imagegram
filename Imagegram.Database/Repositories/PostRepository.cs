@@ -36,5 +36,10 @@ namespace Imagegram.Database.Repositories
         {
             return await _dbContext.Posts.Where(x => x.Creator == AccountId).ToListAsync();
         }
+        public async Task DeletePost(Post post)
+        {
+            _dbContext.Posts.Remove(post);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
