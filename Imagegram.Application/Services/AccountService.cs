@@ -24,21 +24,35 @@ namespace Imagegram.Application.Services
 
         public async Task<AccountDomainModel> AddAccount(AccountCreateDomainModel accountRequest)
         {
-            var account = await _accountRepository.GetAccountByName(accountRequest.Name);
-            if (account is not null)
-                throw new HandleException("Account already exists with given name");
+            try
+            {
+                var account = await _accountRepository.GetAccountByName(accountRequest.Name);
+                if (account is not null)
+                    throw new HandleException("Account already exists with given name");
 
-            var request = _mapper.Map<Account>(accountRequest);
-            var response = _mapper.Map<AccountDomainModel>(await _accountRepository.AddAccount(request));
-            return response;
+                var request = _mapper.Map<Account>(accountRequest);
+                var response = _mapper.Map<AccountDomainModel>(await _accountRepository.AddAccount(request));
+                return response;
+            }
+            catch(Exception ex)
+            {
+                throw new HandleException("Exception in AddAccount method : "+ex.Message);
+            }
         }
 
         public async Task DeleteAccount(Guid id)
         {
-            var account = await _accountRepository.GetAccount(id);
-            if(account is not null)
+            try
             {
-                await _accountRepository.DeleteAccount(account);
+                var account = await _accountRepository.GetAccount(id);
+                if (account is not null)
+                {
+                    await _accountRepository.DeleteAccount(account);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new HandleException("Exception in DeleteAccount method : " + ex.Message);
             }
         }
     }

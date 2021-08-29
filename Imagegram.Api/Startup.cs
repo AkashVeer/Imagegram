@@ -1,5 +1,8 @@
+using Imagegram.Api.Controllers;
 using Imagegram.Api.Middlewares;
 using Imagegram.Application.Extensions;
+using Imagegram.Application.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Imagegram.Api
@@ -31,7 +35,11 @@ namespace Imagegram.Api
             services.AddDatabase(Configuration);
             services.AddRepository();
             services.AddServices();
+            services.AddAuthentication("HeaderAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("HeaderAuthentication", null);
+            services.AddAuthorization();
             services.AddControllers();
+            services.AddAutoMapper(typeof(Startup), typeof(AccountService));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Imagegram.Api", Version = "v1" });
@@ -44,14 +52,14 @@ namespace Imagegram.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Imagegram.Api v1"));
+                
             }
-
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Imagegram.Api v1"));
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseEndpoints(endpoints =>

@@ -10,5 +10,7 @@ namespace Imagegram.Database.Repositories
     public interface ICommentRepository
     {
         Task AddComment(Comment comment);
+        Task DeleteComment(Comment comment);
+        Task<Comment> GetComment(Guid id);
     }
 }

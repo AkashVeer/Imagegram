@@ -10,5 +10,6 @@ namespace Imagegram.Application.Services
     public interface ICommentService
     {
         Task AddComment(CommentCreateDomainModel model);
+        Task DeleteComment(Guid id);
     }
 }

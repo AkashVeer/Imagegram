@@ -2,6 +2,7 @@
 using Imagegram.Database.Repositories;
 using Imagegram.Domain;
 using Imagegram.Model.Dtos.Posts;
+using Imagegram.Model.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,34 +25,55 @@ namespace Imagegram.Application.Services
 
         public async Task<PostDomainModel> AddPost(PostCreateDomainModel model)
         {
-            byte[] byteImg;
-            using (var ms = new MemoryStream())
+            try
             {
-                await model.Image.CopyToAsync(ms);
-                byteImg = ms.ToArray();
+                byte[] byteImg;
+                using (var ms = new MemoryStream())
+                {
+                    await model.Image.CopyToAsync(ms);
+                    byteImg = ms.ToArray();
+                }
+                var post = new Post()
+                {
+                    Caption = model.Caption,
+                    CreatedAt = model.CreatedAt,
+                    Creator = model.Creator,
+                    Image = byteImg
+                };
+                var response = _mapper.Map<PostDomainModel>(await _postRepository.AddPost(post));
+                return response;
             }
-            var post = new Post()
+            catch(Exception ex)
             {
-                Caption = model.Caption,
-                CreatedAt = model.CreatedAt,
-                Creator = model.Creator,
-                Image = byteImg
-            };
-            var response = _mapper.Map<PostDomainModel>(await _postRepository.AddPost(post));
-            return response;
+                throw new HandleException("Exception in AddPost method : " + ex.Message);
+            }
         }
 
         public async Task<List<PostDomainModel>> GetAllPosts()
         {
-            var posts = _mapper.Map<List<PostDomainModel>>(await _postRepository.GetAllPosts());
-            return posts;
+            try
+            {
+                var posts = _mapper.Map<List<PostDomainModel>>(await _postRepository.GetAllPosts());
+                return posts;
+            }
+            catch (Exception ex) 
+            { 
+                throw new HandleException("Exception in GetAllPosts method : " + ex.Message);
+            }
         }
         public async Task DeletePost(Guid id)
         {
-            var post = await _postRepository.GetPost(id);
-            if(post is not null)
+            try
             {
-                await _postRepository.DeletePost(post);
+                var post = await _postRepository.GetPost(id);
+                if (post is not null)
+                {
+                    await _postRepository.DeletePost(post);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new HandleException("Exception in DeletePost method : " + ex.Message);
             }
         }
     }
