@@ -39,6 +39,7 @@ namespace Imagegram.Api
                 .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>("HeaderAuthentication", null);
             services.AddAuthorization();
             services.AddControllers();
+            services.AddMemoryCache();
             services.AddAutoMapper(typeof(Startup), typeof(AccountService));
             services.AddSwaggerGen(c =>
             {
