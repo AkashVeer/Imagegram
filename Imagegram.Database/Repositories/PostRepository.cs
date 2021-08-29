@@ -24,7 +24,7 @@ namespace Imagegram.Database.Repositories
 
         public async Task<List<Post>> GetAllPosts()
         {
-            return await _dbContext.Posts.Include(x => x.Comments.OrderByDescending(x => x.CreatedAt).Take(2)).ToListAsync();
+            return await _dbContext.Posts.OrderByDescending(x=>x.Comments.Count).Include(x => x.Comments.OrderByDescending(x => x.CreatedAt).Take(2)).ToListAsync();
         }
 
         public async Task<Post> GetPost(Guid id)
